@@ -1,3 +1,4 @@
+import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -29,14 +30,7 @@ class _CrimePredictionViewState extends State<CrimePredictionView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Crime Prediction',
-            style: kHead1Grey,
-          ),
-        ),
+        appBar: const ConstantAppBar(text: 'Crime Prediction'),
         body: Padding(
           padding: EdgeInsets.only(top: Get.height * 0.15),
           child: Column(

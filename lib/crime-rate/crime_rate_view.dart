@@ -1,4 +1,4 @@
-import 'package:crime_management_system/constants/textstyles.dart';
+import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -9,20 +9,15 @@ class CrimeRateView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Crime Rate',
-          style: kHead1Grey,
-        ),
-      ),
-      body: Center(
-        child: Container(
-          height: Get.height * 0.5,
-          padding: const EdgeInsets.all(20.0),
-          child: CrimeChart(),
+    return SafeArea(
+      child: Scaffold(
+        appBar: const ConstantAppBar(text: 'Crime Rate'),
+        body: Center(
+          child: Container(
+            height: Get.height * 0.5,
+            padding: const EdgeInsets.all(20.0),
+            child: CrimeChart(),
+          ),
         ),
       ),
     );

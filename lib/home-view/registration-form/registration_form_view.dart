@@ -1,3 +1,4 @@
+import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
 import 'package:crime_management_system/constant-widgets/location_dropdown_button.dart';
@@ -5,6 +6,7 @@ import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:crime_management_system/home-view/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class RegistrationFormView extends StatefulWidget {
@@ -50,6 +52,7 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: const ConstantAppBar(text: 'Report Registration'),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
           child: SingleChildScrollView(
@@ -59,22 +62,18 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                Center(
-                  child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                          text: 'Report ',
-                          style: kHead1Black,
-                          children: [
-                            TextSpan(text: 'Registration', style: kHead1Grey)
-                          ])),
-                ),
+                // Center(
+                //   child: RichText(
+                //       textAlign: TextAlign.center,
+                //       text: TextSpan(
+                //           text: 'Report ',
+                //           style: kHead1Black,
+                //           children: [
+                //             TextSpan(text: 'Registration', style: kHead1Grey)
+                //           ])),
+                // ),
                 SizedBox(
                   height: Get.height * 0.02,
-                ),
-                Text(
-                  'Name',
-                  style: kBody1Black,
                 ),
                 const ConstantTextField(
                   hintText: 'Name',
@@ -83,18 +82,10 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                Text(
-                  'Location',
-                  style: kBody1Black,
-                ),
                 LocationDropDownButton(
                     location: location, hintText: 'Location'),
                 SizedBox(
                   height: Get.height * 0.02,
-                ),
-                Text(
-                  'Date',
-                  style: kBody1Black,
                 ),
                 ConstantTextField(
                   onTapPrefixIcon: () => showDate(context),
@@ -104,20 +95,12 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                Text(
-                  'Category',
-                  style: kBody1Black,
-                ),
                 const ConstantTextField(
                   hintText: 'Category',
                   prefixIcon: Icons.category,
                 ),
                 SizedBox(
                   height: Get.height * 0.02,
-                ),
-                Text(
-                  'Details',
-                  style: kBody1Black,
                 ),
                 const ConstantTextField(
                   hintText: 'Details',
@@ -126,27 +109,29 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                Row(
-                  children: [
-                    ReUsableContainer(
-                      text: 'Upload Picture',
-                      onTap: () {},
-                    ),
-                    SizedBox(
-                      width: Get.width * 0.02,
-                    ),
-                    ReUsableContainer(
-                      text: 'Upload Video',
-                      onTap: () {},
-                    ),
-                  ],
+                FittedBox(
+                  child: Row(
+                    children: [
+                      ReUsableContainer(
+                        text: 'Upload Picture',
+                        onTap: () {},
+                      ),
+                      SizedBox(
+                        width: Get.width * 0.02,
+                      ),
+                      ReUsableContainer(
+                        text: 'Upload Video',
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
                 ),
                 SizedBox(
-                  height: Get.height * 0.03,
+                  height: Get.height * 0.04,
                 ),
                 ConstantButton(
                     buttonText: 'Submit Data',
-                    onTap: () => Get.to(() => const HomeView())),
+                    onTap: () => Get.to(() => const HomeView()))
               ],
             ),
           ),
@@ -174,9 +159,9 @@ class ReUsableContainer extends StatelessWidget {
         width: Get.width * 0.45,
         height: Get.height * 0.09,
         decoration: BoxDecoration(
-            color: kWhite,
+            color: const Color(0xFFF0E6FF),
             borderRadius: BorderRadius.circular(Get.width * 0.06),
-            border: Border.all(color: const Color(0xFFA7A7A7))),
+            border: Border.all(color: kWhite, width: 2.w)),
         child: FittedBox(
           fit: BoxFit.scaleDown,
           child: Row(
@@ -184,7 +169,7 @@ class ReUsableContainer extends StatelessWidget {
             children: [
               const Icon(
                 Icons.upload,
-                color: Color(0xFFA7A7A7),
+                color: kBlack,
                 //   size: 30.r,
               ),
               SizedBox(
@@ -192,7 +177,7 @@ class ReUsableContainer extends StatelessWidget {
               ),
               Text(
                 text,
-                style: kBody1Transparent,
+                style: kBody2Black,
                 maxLines: 2,
               )
             ],

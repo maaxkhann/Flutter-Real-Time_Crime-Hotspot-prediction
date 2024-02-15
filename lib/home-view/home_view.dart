@@ -1,7 +1,6 @@
 import 'package:crime_management_system/constant-widgets/constant_home_category.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
-import 'package:crime_management_system/crime-rate/crime_rate_view.dart';
 import 'package:crime_management_system/home-view/crime_prediction_view.dart';
 import 'package:crime_management_system/home-view/registration-form/registration_form_view.dart';
 import 'package:flutter/material.dart';
@@ -16,16 +15,21 @@ class HomeView extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: constantColor,
+          backgroundColor: kPrimaryColor,
           centerTitle: true,
           automaticallyImplyLeading: false,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(Get.width * 0.04),
+            ),
+          ),
           title: Text(
             'Home',
             style: kHead1White,
           ),
           actions: [
             PopupMenuButton(
-                color: kWhite,
+                color: constantColor,
                 iconColor: kWhite,
                 itemBuilder: ((context) => <PopupMenuEntry>[
                       PopupMenuItem(
@@ -38,30 +42,45 @@ class HomeView extends StatelessWidget {
         ),
         body: Center(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: Get.height * 0.06),
+            padding: EdgeInsets.symmetric(
+                vertical: Get.height * 0.02, horizontal: Get.width * 0.03),
             child: Column(
               children: [
-                ConstantCategory(
-                  text: 'Report Registration',
-                  icon: Icons.report,
-                  onTap: () => Get.to(() => const RegistrationFormView()),
+                Text(
+                  'Report a crime and stay safe',
+                  style: kHead2Black,
                 ),
                 SizedBox(
                   height: Get.height * 0.04,
                 ),
-                ConstantCategory(
-                  text: 'Emergency Service',
-                  icon: Icons.contact_emergency_sharp,
-                  onTap: () => dialNumber('332111'),
-                ),
-                SizedBox(
-                  height: Get.height * 0.04,
-                ),
-                ConstantCategory(
-                  text: 'Crime Prediction',
-                  icon: Icons.online_prediction,
-                  onTap: () => Get.to(() => const CrimePredictionView()),
-                ),
+                Expanded(
+                  child: GridView(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: Get.width * 0.03,
+                        mainAxisSpacing: Get.height * 0.015),
+                    children: [
+                      ConstantHomeCategory(
+                          text: 'Report Registration',
+                          icon: Icons.report,
+                          onTap: () =>
+                              Get.to(() => const RegistrationFormView())),
+                      ConstantHomeCategory(
+                          text: 'Crime Prediction',
+                          icon: Icons.online_prediction,
+                          onTap: () =>
+                              Get.to(() => const CrimePredictionView())),
+                      ConstantHomeCategory(
+                          text: 'Emergency Service',
+                          icon: Icons.call,
+                          onTap: () => dialNumber('43434')),
+                      ConstantHomeCategory(
+                          text: 'Awarness Article',
+                          icon: Icons.article,
+                          onTap: () {}),
+                    ],
+                  ),
+                )
               ],
             ),
           ),

@@ -1,8 +1,10 @@
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/crime-rate/crime_rate_view.dart';
 import 'package:crime_management_system/home-view/home_view.dart';
+import 'package:crime_management_system/profile-view/user_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:icon_decoration/icon_decoration.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
@@ -19,7 +21,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   List<Widget> pages = [
     const HomeView(),
     const CrimeRateView(),
-    const HomeView(),
+    const UserProfileView(),
   ];
 
   @override
@@ -36,50 +38,57 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
       },
       child: Scaffold(
         body: pages[isSelectedTab],
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: isSelectedTab,
-            //  type: BottomNavigationBarType.shifting,
-            onTap: (index) {
-              setState(() {
-                isSelectedTab = index;
-              });
-            },
-            backgroundColor: kButtonColor,
-            items: [
-              BottomNavigationBarItem(
-                  icon: DecoratedIcon(
-                    icon: Icon(
-                      Icons.home,
-                      size: 26.r,
-                      color: kWhite,
+        bottomNavigationBar: ClipRRect(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(Get.width * 0.04),
+              topRight: Radius.circular(Get.width * 0.04)),
+          child: BottomNavigationBar(
+              currentIndex: isSelectedTab,
+              //   type: BottomNavigationBarType.shifting,
+              onTap: (index) {
+                setState(() {
+                  isSelectedTab = index;
+                });
+              },
+              selectedItemColor: Colors.teal,
+              unselectedItemColor: kWhite,
+              backgroundColor: kPrimaryColor,
+              items: [
+                BottomNavigationBarItem(
+                    icon: DecoratedIcon(
+                      icon: Icon(
+                        Icons.home,
+                        size: 26.r,
+                        //    color: kWhite,
+                      ),
+                      decoration: IconDecoration(
+                          border: IconBorder(color: kBlack, width: 2.w)),
                     ),
-                    decoration: IconDecoration(
-                        border: IconBorder(color: constantColor, width: 4.w)),
-                  ),
-                  label: ''),
-              BottomNavigationBarItem(
-                  icon: DecoratedIcon(
-                    icon: Icon(
-                      Icons.batch_prediction,
-                      size: 26.r,
-                      color: kWhite,
+                    label: ''),
+                BottomNavigationBarItem(
+                    icon: DecoratedIcon(
+                      icon: Icon(
+                        Icons.batch_prediction,
+                        size: 26.r,
+                        //   color: kWhite,
+                      ),
+                      decoration: IconDecoration(
+                          border: IconBorder(color: kBlack, width: 2.w)),
                     ),
-                    decoration: IconDecoration(
-                        border: IconBorder(color: constantColor, width: 4.w)),
-                  ),
-                  label: ''),
-              BottomNavigationBarItem(
-                  icon: DecoratedIcon(
-                    icon: Icon(
-                      Icons.person_pin,
-                      size: 26.r,
-                      color: kWhite,
+                    label: ''),
+                BottomNavigationBarItem(
+                    icon: DecoratedIcon(
+                      icon: Icon(
+                        Icons.person_pin,
+                        size: 26.r,
+                        //   color: kWhite,
+                      ),
+                      decoration: IconDecoration(
+                          border: IconBorder(color: kBlack, width: 2.w)),
                     ),
-                    decoration: IconDecoration(
-                        border: IconBorder(color: constantColor, width: 4.w)),
-                  ),
-                  label: ''),
-            ]),
+                    label: ''),
+              ]),
+        ),
       ),
     );
   }
