@@ -4,7 +4,7 @@ import 'package:crime_management_system/constant-widgets/constant_textfield.dart
 import 'package:crime_management_system/constant-widgets/location_dropdown_button.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
-import 'package:crime_management_system/home-view/home_view.dart';
+import 'package:crime_management_system/view/home-view/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

@@ -1,11 +1,11 @@
 import 'package:crime_management_system/constant-widgets/constant_home_category.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
-import 'package:crime_management_system/home-view/crime_prediction_view.dart';
-import 'package:crime_management_system/home-view/registration-form/registration_form_view.dart';
+import 'package:crime_management_system/view/home-view/crime_prediction_view.dart';
+import 'package:crime_management_system/view/home-view/emergency_services_view.dart';
+import 'package:crime_management_system/view/home-view/registration-form/registration_form_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -71,9 +71,10 @@ class HomeView extends StatelessWidget {
                           onTap: () =>
                               Get.to(() => const CrimePredictionView())),
                       ConstantHomeCategory(
-                          text: 'Emergency Service',
+                          text: 'Emergency Services',
                           icon: Icons.call,
-                          onTap: () => dialNumber('43434')),
+                          onTap: () =>
+                              Get.to(() => const EmergencyServicesView())),
                       ConstantHomeCategory(
                           text: 'Awarness Article',
                           icon: Icons.article,
@@ -88,12 +89,4 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-}
-
-Future<void> dialNumber(String phoneNumber) async {
-  final Uri launchUri = Uri(
-    scheme: 'tel',
-    path: phoneNumber,
-  );
-  await launchUrl(launchUri);
 }

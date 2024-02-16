@@ -1,7 +1,7 @@
 import 'package:crime_management_system/constants/colors.dart';
-import 'package:crime_management_system/crime-rate/crime_rate_view.dart';
-import 'package:crime_management_system/home-view/home_view.dart';
-import 'package:crime_management_system/profile-view/user_profile_view.dart';
+import 'package:crime_management_system/view/crime-rate/crime_rate_view.dart';
+import 'package:crime_management_system/view/home-view/home_view.dart';
+import 'package:crime_management_system/view/profile-view/user_profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

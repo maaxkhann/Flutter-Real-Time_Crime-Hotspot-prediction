@@ -19,8 +19,13 @@ class UserProfileView extends StatefulWidget {
 class _UserProfileViewState extends State<UserProfileView> {
   File? image;
   final picker = ImagePicker();
-  void pickImage(ImageSource source) async {
-    final pickedImage = await picker.pickImage(source: source);
+  void pickImage() async {
+    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      setState(() {
+        image = File(pickedImage.path);
+      });
+    }
   }
 
   @override
@@ -43,7 +48,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                         bottom: 0,
                         right: 0,
                         child: InkWell(
-                            onTap: () => pickImage(ImageSource.gallery),
+                            onTap: () => pickImage(),
                             child: const Icon(Icons.camera_alt)))
                   ],
                 ),

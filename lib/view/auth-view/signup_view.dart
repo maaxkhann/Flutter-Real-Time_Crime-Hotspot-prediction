@@ -1,4 +1,4 @@
-import 'package:crime_management_system/auth-view/login_view.dart';
+import 'package:crime_management_system/view/auth-view/login_view.dart';
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
