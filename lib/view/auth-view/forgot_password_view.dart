@@ -1,12 +1,12 @@
-import 'package:crime_management_system/view/auth-view/signup_view.dart';
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
-import 'package:crime_management_system/constant-widgets/bottom_nav_bar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
-import 'package:crime_management_system/constants/colors.dart';
-import 'package:crime_management_system/constants/textstyles.dart';
+import 'package:crime_management_system/view-model/auth_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({super.key});
@@ -16,8 +16,11 @@ class ForgotPasswordView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<ForgotPasswordView> {
+  TextEditingController emailController = TextEditingController();
+  FirebaseAuth auth = FirebaseAuth.instance;
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<AuthViewModel>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: const ConstantAppBar(text: 'Forgot Password'),
@@ -26,14 +29,23 @@ class _LoginViewState extends State<ForgotPasswordView> {
               horizontal: Get.width * 0.04, vertical: Get.height * 0.1),
           child: Column(
             children: [
-              const ConstantTextField(
+              ConstantTextField(
+                controller: emailController,
                 hintText: 'Email',
                 prefixIcon: Icons.email,
               ),
               SizedBox(
                 height: Get.height * 0.04,
               ),
-              ConstantButton(buttonText: 'Submit', onTap: () => Get.back()),
+              ConstantButton(
+                  buttonText: 'Submit',
+                  onTap: () {
+                    if (emailController.text.isNotEmpty) {
+                      provider.resetPassword(emailController.text.trim());
+                    } else {
+                      Fluttertoast.showToast(msg: 'Please enter correct email');
+                    }
+                  }),
             ],
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:crime_management_system/view-model/auth_view_model.dart';
 import 'package:crime_management_system/view/auth-view/login_view.dart';
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
@@ -5,16 +6,30 @@ import 'package:crime_management_system/constant-widgets/constant_textfield.dart
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
-class SignUpView extends StatelessWidget {
+class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
 
   @override
+  State<SignUpView> createState() => _SignUpViewState();
+}
+
+class _SignUpViewState extends State<SignUpView> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
+  ValueNotifier<bool> isChecked = ValueNotifier<bool>(false);
+  ValueNotifier<bool> isPasswordVisible = ValueNotifier(false);
+  ValueNotifier<bool> isConfirmPasswordVisible = ValueNotifier(false);
+  @override
   Widget build(BuildContext context) {
-    ValueNotifier<bool> isChecked = ValueNotifier<bool>(false);
-    ValueNotifier<bool> isPasswordVisible = ValueNotifier(false);
-    ValueNotifier<bool> isConfirmPasswordVisible = ValueNotifier(false);
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: const ConstantAppBar(text: 'SignUp'),
@@ -22,51 +37,35 @@ class SignUpView extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
           child: ListView(
             children: [
-              // SizedBox(
-              //   height: Get.height * 0.02,
-              // ),
-              // Center(
-              //   child: RichText(
-              //       textAlign: TextAlign.center,
-              //       text: TextSpan(
-              //           text: 'Real-time ',
-              //           style: kHead1Black,
-              //           children: [
-              //             TextSpan(
-              //                 text: 'Crime Hotspot Prediction',
-              //                 style: kHead1Grey)
-              //           ])),
-              // ),
+              Center(
+                child: CircleAvatar(
+                  radius: 50.r,
+                  child: Image.asset(
+                    'assets/images/icon.jpg',
+                    fit: BoxFit.scaleDown,
+                  ),
+                ),
+              ),
+              ConstantTextField(
+                  controller: nameController,
+                  hintText: 'Name',
+                  prefixIcon: Icons.person),
               SizedBox(
                 height: Get.height * 0.02,
               ),
-
-              SizedBox(
-                height: Get.height * 0.02,
-              ),
-
-              SizedBox(
-                height: Get.height * 0.01,
-              ),
-
-              const ConstantTextField(
-                  hintText: 'Name', prefixIcon: Icons.person),
-              SizedBox(
-                height: Get.height * 0.02,
-              ),
-
-              const ConstantTextField(
+              ConstantTextField(
+                controller: emailController,
                 hintText: 'Email',
                 prefixIcon: Icons.email,
               ),
               SizedBox(
                 height: Get.height * 0.02,
               ),
-
               ValueListenableBuilder(
                   valueListenable: isPasswordVisible,
                   builder: (ctx, value, child) {
                     return ConstantTextField(
+                      controller: passwordController,
                       hintText: 'Password',
                       obscureText: !isPasswordVisible.value,
                       prefixIcon: Icons.lock,
@@ -81,11 +80,11 @@ class SignUpView extends StatelessWidget {
               SizedBox(
                 height: Get.height * 0.02,
               ),
-
               ValueListenableBuilder(
                   valueListenable: isConfirmPasswordVisible,
                   builder: (ctx, value, child) {
                     return ConstantTextField(
+                      controller: confirmPasswordController,
                       hintText: 'Confirm Password',
                       obscureText: !isConfirmPasswordVisible.value,
                       prefixIcon: Icons.lock,
@@ -98,12 +97,30 @@ class SignUpView extends StatelessWidget {
                       },
                     );
                   }),
-
               SizedBox(
                 height: Get.height * 0.05,
               ),
-              ConstantButton(buttonText: 'Sign Up', onTap: () {}),
-
+              ConstantButton(
+                  buttonText: 'Sign Up',
+                  onTap: () {
+                    if (nameController.text.isEmpty ||
+                        emailController.text.isEmpty ||
+                        passwordController.text.isEmpty ||
+                        confirmPasswordController.text.isEmpty) {
+                      Fluttertoast.showToast(msg: 'Please fill all the fields');
+                      return;
+                    } else if (passwordController.text !=
+                        confirmPasswordController.text) {
+                      Fluttertoast.showToast(msg: 'Password not matched');
+                      return;
+                    } else {
+                      authViewModel.createUser(
+                          context,
+                          nameController.text.trim(),
+                          emailController.text.trim(),
+                          passwordController.text.trim());
+                    }
+                  }),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

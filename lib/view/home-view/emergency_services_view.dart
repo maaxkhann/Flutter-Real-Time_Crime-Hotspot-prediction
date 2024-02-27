@@ -1,5 +1,4 @@
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
-import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,7 +14,7 @@ class EmergencyServicesView extends StatelessWidget {
       child: Scaffold(
         appBar: const ConstantAppBar(text: 'Emergency Services'),
         body: Padding(
-          padding: EdgeInsets.only(left: Get.width * 0.06),
+          padding: EdgeInsets.only(left: Get.width * 0.22),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

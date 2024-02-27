@@ -1,17 +1,22 @@
 import 'package:crime_management_system/constant-widgets/constant_home_category.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
+import 'package:crime_management_system/view-model/auth_view_model.dart';
+import 'package:crime_management_system/view/home-view/about_us_view.dart';
 import 'package:crime_management_system/view/home-view/crime_prediction_view.dart';
 import 'package:crime_management_system/view/home-view/emergency_services_view.dart';
 import 'package:crime_management_system/view/home-view/registration-form/registration_form_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ndialog/ndialog.dart';
+import 'package:provider/provider.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -28,15 +33,34 @@ class HomeView extends StatelessWidget {
             style: kHead1White,
           ),
           actions: [
+            InkWell(
+              onTap: () {
+                AlertDialog(
+                  title: const Text('Are you sure to logout?'),
+                  actions: [
+                    TextButton(
+                        onPressed: () => authViewModel.signOut(),
+                        child: const Text('Yes')),
+                    TextButton(
+                        onPressed: () => Get.back(), child: const Text('No')),
+                  ],
+                ).show(context);
+              },
+              child: Icon(
+                Icons.logout,
+                color: kWhite,
+              ),
+            ),
             PopupMenuButton(
                 color: constantColor,
                 iconColor: kWhite,
                 itemBuilder: ((context) => <PopupMenuEntry>[
                       PopupMenuItem(
+                          onTap: () => Get.to(() => const AboutUsView()),
                           child: Text(
-                        'About Us',
-                        style: kBody1Black,
-                      ))
+                            'About Us',
+                            style: kBody1Black,
+                          ))
                     ]))
           ],
         ),
@@ -76,7 +100,7 @@ class HomeView extends StatelessWidget {
                           onTap: () =>
                               Get.to(() => const EmergencyServicesView())),
                       ConstantHomeCategory(
-                          text: 'Awarness Article',
+                          text: 'Security Tips',
                           icon: Icons.article,
                           onTap: () {}),
                     ],

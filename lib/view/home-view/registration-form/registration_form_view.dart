@@ -4,10 +4,13 @@ import 'package:crime_management_system/constant-widgets/constant_textfield.dart
 import 'package:crime_management_system/constant-widgets/location_dropdown_button.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
-import 'package:crime_management_system/view/home-view/home_view.dart';
+import 'package:crime_management_system/view-model/report_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class RegistrationFormView extends StatefulWidget {
   const RegistrationFormView({super.key});
@@ -18,7 +21,11 @@ class RegistrationFormView extends StatefulWidget {
 
 class _RegistrationFormViewState extends State<RegistrationFormView> {
   List<String> location = ['G Sector', 'E Sector', 'I Sector'];
+  final ValueNotifier<String> selectedLocation = ValueNotifier<String>('');
   TextEditingController dateController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController categoryController = TextEditingController();
+  TextEditingController detailsController = TextEditingController();
 
   void showDate(context) async {
     showDatePicker(
@@ -50,6 +57,8 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
 
   @override
   Widget build(BuildContext context) {
+    final reportViewModel =
+        Provider.of<ReportViewModel>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: const ConstantAppBar(text: 'Report Registration'),
@@ -75,7 +84,8 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                const ConstantTextField(
+                ConstantTextField(
+                  controller: nameController,
                   hintText: 'Name',
                   prefixIcon: Icons.person,
                 ),
@@ -83,11 +93,14 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                   height: Get.height * 0.02,
                 ),
                 LocationDropDownButton(
-                    location: location, hintText: 'Location'),
+                    selectedLocation: selectedLocation,
+                    location: location,
+                    hintText: 'Location'),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
                 ConstantTextField(
+                  controller: dateController,
                   onTapPrefixIcon: () => showDate(context),
                   hintText: 'Date',
                   prefixIcon: Icons.date_range,
@@ -95,14 +108,16 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                const ConstantTextField(
+                ConstantTextField(
+                  controller: categoryController,
                   hintText: 'Category',
                   prefixIcon: Icons.category,
                 ),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                const ConstantTextField(
+                ConstantTextField(
+                  controller: detailsController,
                   hintText: 'Details',
                   prefixIcon: Icons.details,
                 ),
@@ -114,14 +129,16 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                     children: [
                       ReUsableContainer(
                         text: 'Upload Picture',
-                        onTap: () {},
+                        onTap: () =>
+                            reportViewModel.pickImage(ImageSource.gallery),
                       ),
                       SizedBox(
                         width: Get.width * 0.02,
                       ),
                       ReUsableContainer(
                         text: 'Upload Video',
-                        onTap: () {},
+                        onTap: () =>
+                            reportViewModel.pickVideo(ImageSource.gallery),
                       ),
                     ],
                   ),
@@ -131,7 +148,24 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 ),
                 ConstantButton(
                     buttonText: 'Submit Data',
-                    onTap: () => Get.to(() => const HomeView()))
+                    onTap: () {
+                      if (nameController.text.isEmpty ||
+                          selectedLocation.value.isEmpty ||
+                          dateController.text.isEmpty ||
+                          categoryController.text.isEmpty ||
+                          detailsController.text.isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: 'Please fill all the fields');
+                      } else {
+                        reportViewModel.submitReport(
+                            context,
+                            nameController.text.trim(),
+                            selectedLocation.value,
+                            dateController.text.trim(),
+                            categoryController.text.trim(),
+                            detailsController.text.trim());
+                      }
+                    })
               ],
             ),
           ),

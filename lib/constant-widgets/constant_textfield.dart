@@ -1,10 +1,10 @@
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ConstantTextField extends StatelessWidget {
+  final TextEditingController controller;
   final String hintText;
   final IconData prefixIcon;
   final IconData? suffixIcon;
@@ -13,6 +13,7 @@ class ConstantTextField extends StatelessWidget {
   final bool? obscureText;
   const ConstantTextField(
       {super.key,
+      required this.controller,
       required this.hintText,
       required this.prefixIcon,
       this.suffixIcon,
@@ -23,6 +24,7 @@ class ConstantTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       obscureText: obscureText ?? false,
       decoration: InputDecoration(
           fillColor: constantColor,

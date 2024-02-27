@@ -1,13 +1,16 @@
+import 'package:crime_management_system/view-model/auth_view_model.dart';
 import 'package:crime_management_system/view/auth-view/forgot_password_view.dart';
 import 'package:crime_management_system/view/auth-view/signup_view.dart';
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
-import 'package:crime_management_system/constant-widgets/bottom_nav_bar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -17,11 +20,14 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   ValueNotifier<bool> isChecked = ValueNotifier<bool>(false);
   ValueNotifier<bool> isPasswordVisible = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context, listen: false);
     return SafeArea(
       child: Scaffold(
         appBar: const ConstantAppBar(text: 'Login'),
@@ -31,27 +37,26 @@ class _LoginViewState extends State<LoginView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: Get.height * 0.02,
+                Center(
+                  child: CircleAvatar(
+                    radius: 50.r,
+                    child: Image.asset(
+                      'assets/images/icon.jpg',
+                      fit: BoxFit.scaleDown,
+                    ),
+                  ),
                 ),
-                // Center(
-                //   child: RichText(
-                //       textAlign: TextAlign.center,
-                //       text: TextSpan(
-                //           text: 'Real-time ',
-                //           style: kHead1Black,
-                //           children: [
-                //             TextSpan(
-                //                 text: 'Crime Hotspot Prediction',
-                //                 style: kHead1Grey)
-                //           ])),
-                // ),
-
+                Center(
+                  child: Text(
+                    'Welcome to CrimeAlertPro',
+                    style: kHead2Black,
+                  ),
+                ),
                 SizedBox(
                   height: Get.height * 0.1,
                 ),
-
-                const ConstantTextField(
+                ConstantTextField(
+                  controller: emailController,
                   hintText: 'Email',
                   prefixIcon: Icons.email,
                 ),
@@ -62,6 +67,7 @@ class _LoginViewState extends State<LoginView> {
                     valueListenable: isPasswordVisible,
                     builder: (ctx, value, child) {
                       return ConstantTextField(
+                        controller: passwordController,
                         hintText: 'Password',
                         obscureText: !isPasswordVisible.value,
                         prefixIcon: Icons.lock,
@@ -88,8 +94,19 @@ class _LoginViewState extends State<LoginView> {
                 ),
                 ConstantButton(
                     buttonText: 'Login',
-                    onTap: () =>
-                        Get.to(() => const BottomNavigationBarWidget())),
+                    onTap: () {
+                      if (emailController.text.isEmpty ||
+                          passwordController.text.isEmpty) {
+                        Fluttertoast.showToast(
+                            msg: 'Please fill both the fields');
+                        return;
+                      } else {
+                        authViewModel.loginUser(
+                            context,
+                            emailController.text.trim(),
+                            passwordController.text.trim());
+                      }
+                    }),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -106,7 +123,6 @@ class _LoginViewState extends State<LoginView> {
                     )
                   ],
                 ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

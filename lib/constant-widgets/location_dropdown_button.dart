@@ -6,16 +6,17 @@ import 'package:get/get.dart';
 
 class LocationDropDownButton extends StatelessWidget {
   final List<String> location;
+  final ValueNotifier<String> selectedLocation;
   final String hintText;
   const LocationDropDownButton({
     super.key,
     required this.location,
+    required this.selectedLocation,
     required this.hintText,
   });
 
   @override
   Widget build(BuildContext context) {
-    final ValueNotifier<String> selectedLocation = ValueNotifier<String>('');
     return ValueListenableBuilder(
       valueListenable: selectedLocation,
       builder: (context, value, child) {
