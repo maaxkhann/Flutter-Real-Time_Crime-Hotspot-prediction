@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:crime_management_system/constant-widgets/bottom_nav_bar.dart';
 import 'package:crime_management_system/view/auth-view/login_view.dart';
-import 'package:crime_management_system/view/home-view/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +23,6 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isLogin();
     Timer(

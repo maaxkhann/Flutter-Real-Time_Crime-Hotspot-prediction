@@ -96,14 +96,6 @@ class CrimeChart extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.all(10),
-          color: Colors.grey.withOpacity(0.5),
-          child: Text(
-            'Crime Prediction: ${predictedData.last.count}% expected in next month',
-            style: const TextStyle(color: Colors.black),
-          ),
-        ),
       ],
     );
   }

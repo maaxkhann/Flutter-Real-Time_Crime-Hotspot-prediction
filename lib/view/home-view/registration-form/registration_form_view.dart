@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class RegistrationFormView extends StatefulWidget {
@@ -20,39 +21,56 @@ class RegistrationFormView extends StatefulWidget {
 }
 
 class _RegistrationFormViewState extends State<RegistrationFormView> {
-  List<String> location = ['G Sector', 'E Sector', 'I Sector'];
-  final ValueNotifier<String> selectedLocation = ValueNotifier<String>('');
+  List<String> weather = ['Sunny', 'Rain', 'Clear', 'Cloudy', 'Fog'];
+  List<String> dayNight = ['Day', 'Night'];
+  List<String> gender = ['Male', 'Female'];
+  List<String> isArrested = ['Yes', 'No'];
+  List<String> crimeType = [
+    'Assault',
+    'Burglary',
+    'Theft',
+    'Vandalism',
+    'Drug_Possession',
+    'Robbery'
+  ];
+  final ValueNotifier<String> selectedWeather = ValueNotifier<String>('');
+  final ValueNotifier<String> selectedDayNight = ValueNotifier<String>('');
+  final ValueNotifier<String> selectedgender = ValueNotifier<String>('');
+  final ValueNotifier<String> selectedIsArrested = ValueNotifier<String>('');
+  final ValueNotifier<String> selectedCrimeType = ValueNotifier<String>('');
   TextEditingController dateController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController categoryController = TextEditingController();
-  TextEditingController detailsController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController sectorController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+  TextEditingController crimeRateController = TextEditingController();
 
-  void showDate(context) async {
-    showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime(2024, 2),
-        lastDate: DateTime(2025, 12),
-        builder: (context, picker) {
-          return Theme(
-            //TODO: change colors
-            data: ThemeData.dark().copyWith(
-              colorScheme: const ColorScheme.dark(
-                primary: Colors.deepPurple,
-                onPrimary: Colors.white,
-                surface: Colors.black,
-                onSurface: Colors.white,
-              ),
-              dialogBackgroundColor: Colors.green[900],
+  void showDate(BuildContext context) async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024, 2),
+      lastDate: DateTime(2050, 12),
+      builder: (context, picker) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Colors.deepPurple,
+              onPrimary: Colors.white,
+              surface: Colors.black,
+              onSurface: Colors.white,
             ),
-            child: picker!,
-          );
-        }).then((selectedDate) {
-      //TODO: handle selected date
-      if (selectedDate != null) {
-        dateController.text = selectedDate.toString();
-      }
-    });
+            dialogBackgroundColor: Colors.green[900],
+          ),
+          child: picker!,
+        );
+      },
+    );
+
+    if (selectedDate != null) {
+      final formattedDate = DateFormat('dd MM yyyy').format(selectedDate);
+      dateController.text = formattedDate;
+      print(dateController.text);
+    }
   }
 
   @override
@@ -63,39 +81,268 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
       child: Scaffold(
         appBar: const ConstantAppBar(text: 'Report Registration'),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+          padding: EdgeInsets.symmetric(
+              horizontal: Get.width * 0.04, vertical: Get.height * 0.02),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  height: Get.height * 0.02,
+                ConstantTextField(
+                  controller: locationController,
+                  hintText: 'Location',
+                  prefixIcon: Icons.location_pin,
                 ),
-                // Center(
-                //   child: RichText(
-                //       textAlign: TextAlign.center,
-                //       text: TextSpan(
-                //           text: 'Report ',
-                //           style: kHead1Black,
-                //           children: [
-                //             TextSpan(text: 'Registration', style: kHead1Grey)
-                //           ])),
-                // ),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
                 ConstantTextField(
-                  controller: nameController,
-                  hintText: 'Name',
-                  prefixIcon: Icons.person,
+                  controller: sectorController,
+                  hintText: 'Sector',
+                  prefixIcon: Icons.location_city,
                 ),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                LocationDropDownButton(
-                    selectedLocation: selectedLocation,
-                    location: location,
-                    hintText: 'Location'),
+                ValueListenableBuilder(
+                  valueListenable: selectedCrimeType,
+                  builder: (context, value, child) {
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Crime Type',
+                          style: kBody2Black,
+                        ),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: kBlack,
+                        ),
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.type_specimen,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: crimeType.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: kBody1Black,
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedCrimeType.value = value ?? '';
+                        });
+                  },
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: selectedWeather,
+                  builder: (context, value, child) {
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Weather',
+                          style: kBody2Black,
+                        ),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: kBlack,
+                        ),
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.cloud_sync,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: weather.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: kBody1Black,
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedWeather.value = value ?? '';
+                        });
+                  },
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: selectedDayNight,
+                  builder: (context, value, child) {
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Day/Night',
+                          style: kBody2Black,
+                        ),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: kBlack,
+                        ),
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.sunny,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: dayNight.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: kBody1Black,
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedDayNight.value = value ?? '';
+                        });
+                  },
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                ConstantTextField(
+                  controller: ageController,
+                  hintText: 'Suspect Age',
+                  prefixIcon: Icons.numbers,
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: selectedgender,
+                  builder: (context, value, child) {
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Male/Female',
+                          style: kBody2Black,
+                        ),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: kBlack,
+                        ),
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.person,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: gender.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: kBody1Black,
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedgender.value = value ?? '';
+                        });
+                  },
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                ValueListenableBuilder(
+                  valueListenable: selectedIsArrested,
+                  builder: (context, value, child) {
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Arrested/Not Arrested',
+                          style: kBody2Black,
+                        ),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: kBlack,
+                        ),
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.local_police,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: isArrested.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(
+                                value,
+                                style: kBody1Black,
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedIsArrested.value = value ?? '';
+                        });
+                  },
+                ),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
@@ -109,112 +356,48 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                   height: Get.height * 0.02,
                 ),
                 ConstantTextField(
-                  controller: categoryController,
-                  hintText: 'Category',
-                  prefixIcon: Icons.category,
+                  controller: crimeRateController,
+                  hintText: 'Crime Rate',
+                  prefixIcon: Icons.numbers,
                 ),
                 SizedBox(
                   height: Get.height * 0.02,
                 ),
-                ConstantTextField(
-                  controller: detailsController,
-                  hintText: 'Details',
-                  prefixIcon: Icons.details,
-                ),
                 SizedBox(
                   height: Get.height * 0.02,
-                ),
-                FittedBox(
-                  child: Row(
-                    children: [
-                      ReUsableContainer(
-                        text: 'Upload Picture',
-                        onTap: () =>
-                            reportViewModel.pickImage(ImageSource.gallery),
-                      ),
-                      SizedBox(
-                        width: Get.width * 0.02,
-                      ),
-                      ReUsableContainer(
-                        text: 'Upload Video',
-                        onTap: () =>
-                            reportViewModel.pickVideo(ImageSource.gallery),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: Get.height * 0.04,
                 ),
                 ConstantButton(
                     buttonText: 'Submit Data',
                     onTap: () {
-                      if (nameController.text.isEmpty ||
-                          selectedLocation.value.isEmpty ||
+                      if (locationController.text.isEmpty ||
+                          sectorController.text.isEmpty ||
                           dateController.text.isEmpty ||
-                          categoryController.text.isEmpty ||
-                          detailsController.text.isEmpty) {
+                          selectedCrimeType.value.isEmpty ||
+                          ageController.text.isEmpty ||
+                          selectedDayNight.value.isEmpty ||
+                          selectedIsArrested.value.isEmpty ||
+                          selectedWeather.value.isEmpty ||
+                          selectedgender.value.isEmpty ||
+                          crimeRateController.text.isEmpty) {
                         Fluttertoast.showToast(
                             msg: 'Please fill all the fields');
                       } else {
                         reportViewModel.submitReport(
                             context,
-                            nameController.text.trim(),
-                            selectedLocation.value,
+                            locationController.text.trim(),
+                            sectorController.text.trim(),
                             dateController.text.trim(),
-                            categoryController.text.trim(),
-                            detailsController.text.trim());
+                            selectedCrimeType.value,
+                            selectedWeather.value,
+                            selectedDayNight.value,
+                            ageController.text.trim(),
+                            selectedgender.value,
+                            selectedIsArrested.value,
+                            crimeRateController.text.trim());
                       }
                     })
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ReUsableContainer extends StatelessWidget {
-  final String text;
-  final VoidCallback onTap;
-  const ReUsableContainer({
-    super.key,
-    required this.text,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: Get.width * 0.02),
-        width: Get.width * 0.45,
-        height: Get.height * 0.09,
-        decoration: BoxDecoration(
-            color: const Color(0xFFF0E6FF),
-            borderRadius: BorderRadius.circular(Get.width * 0.06),
-            border: Border.all(color: kWhite, width: 2.w)),
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.upload,
-                color: kBlack,
-                //   size: 30.r,
-              ),
-              SizedBox(
-                width: Get.width * 0.02,
-              ),
-              Text(
-                text,
-                style: kBody2Black,
-                maxLines: 2,
-              )
-            ],
           ),
         ),
       ),
