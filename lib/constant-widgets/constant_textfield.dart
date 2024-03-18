@@ -26,6 +26,11 @@ class ConstantTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       obscureText: obscureText ?? false,
+      keyboardType: hintText == 'Email'
+          ? TextInputType.emailAddress
+          : hintText == 'CNIC'
+              ? TextInputType.number
+              : TextInputType.text,
       decoration: InputDecoration(
           fillColor: constantColor,
           filled: true,

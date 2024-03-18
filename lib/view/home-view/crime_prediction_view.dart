@@ -1,5 +1,4 @@
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
-import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pie_chart/pie_chart.dart';
