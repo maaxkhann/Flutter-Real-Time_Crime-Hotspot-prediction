@@ -6,6 +6,7 @@ import 'package:crime_management_system/view/home-view/about_us_view.dart';
 import 'package:crime_management_system/view/home-view/crime_prediction_view.dart';
 import 'package:crime_management_system/view/home-view/emergency_services_view.dart';
 import 'package:crime_management_system/view/home-view/registration-form/registration_form_view.dart';
+import 'package:crime_management_system/view/home-view/security_tips_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndialog/ndialog.dart';
@@ -102,7 +103,7 @@ class HomeView extends StatelessWidget {
                       ConstantHomeCategory(
                           text: 'Security Tips',
                           icon: Icons.article,
-                          onTap: () {}),
+                          onTap: () => Get.to(() => const SecurityTipsView())),
                     ],
                   ),
                 )
