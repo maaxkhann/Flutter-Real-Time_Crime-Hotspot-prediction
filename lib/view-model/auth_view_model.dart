@@ -21,13 +21,15 @@ class AuthViewModel with ChangeNotifier {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
+
       if (userCredential.user != null) {
         String uId = auth.currentUser!.uid;
-        progressDialog.dismiss();
+
         DocumentReference documentReference =
             firestore.collection('Users').doc(uId);
         await documentReference
             .set({'name': name, 'email': email, 'userId': uId});
+        progressDialog.dismiss();
         Fluttertoast.showToast(msg: 'Sign Up Successfully');
         Get.off(() => const LoginView());
       }
@@ -66,6 +68,7 @@ class AuthViewModel with ChangeNotifier {
         final SharedPreferences sharedPreferences =
             await SharedPreferences.getInstance();
         sharedPreferences.setBool('isLoggedIn', true);
+
         Get.off(() => const BottomNavigationBarWidget());
       }
     } on FirebaseAuthException catch (e) {

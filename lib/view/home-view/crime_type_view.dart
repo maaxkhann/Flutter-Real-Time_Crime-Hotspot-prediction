@@ -1,24 +1,28 @@
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
-import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
-import 'package:crime_management_system/view-model/report_view_model.dart';
+import 'package:crime_management_system/view-model/crime_type_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class RegistrationFormView extends StatefulWidget {
-  const RegistrationFormView({super.key});
+class CrimeTypeView extends StatefulWidget {
+  const CrimeTypeView({super.key});
 
   @override
-  State<RegistrationFormView> createState() => _RegistrationFormViewState();
+  State<CrimeTypeView> createState() => _CrimeTypeViewState();
 }
 
-class _RegistrationFormViewState extends State<RegistrationFormView> {
+class _CrimeTypeViewState extends State<CrimeTypeView>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<Offset> _slideAnimationLeftToRight;
+  late Animation<Offset> _slideAnimationBottomToTop;
+  late Animation<double> _fadeAnimation;
+
   List<String> location = [
     'khanna',
     'koral',
@@ -75,7 +79,6 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
     'h-13',
     'b-17'
   ];
-  List<String> time = ['morning', 'afternoon', 'evening', 'night'];
   List<String> category = [
     'domestic violence(spousal abuse)',
     'domestic violence(child abuse)',
@@ -100,16 +103,14 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
   ];
   final ValueNotifier<String> selectedLocation = ValueNotifier<String>('');
   final ValueNotifier<String> selectedCategory = ValueNotifier<String>('');
-  final ValueNotifier<String> selectedTime = ValueNotifier<String>('');
   TextEditingController dateController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController cnicController = TextEditingController();
+  double coloredPercentage = 30; // Initial value for the colored percentage
 
   void showDate(context) async {
     showDatePicker(
         context: context,
         initialDate: DateTime.now(),
-        firstDate: DateTime(2024, 2),
+        firstDate: DateTime(2024, 1),
         lastDate: DateTime(2050, 12),
         builder: (context, picker) {
           return Theme(
@@ -128,109 +129,47 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
       if (selectedDate != null) {
         final formattedDate = DateFormat('M/dd/yyyy').format(selectedDate);
         dateController.text = formattedDate;
+        print(dateController.text);
       }
     });
   }
 
   @override
-  void dispose() {
-    nameController.dispose();
-    cnicController.dispose();
-    selectedLocation.dispose();
-    selectedCategory.dispose();
-    dateController.dispose();
-    selectedTime.dispose();
-
-    super.dispose();
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 500),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
+    _slideAnimationLeftToRight = Tween<Offset>(
+      begin: Offset(-1, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+    _slideAnimationBottomToTop = Tween<Offset>(
+      begin: Offset(0, 1),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ReportViewModel>(context);
+    final provider = Provider.of<CrimeTypeViewModel>(context);
     return SafeArea(
       child: Scaffold(
-        appBar: const ConstantAppBar(text: 'Report Registration'),
+        appBar: ConstantAppBar(text: 'Search With Category'),
         body: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: Get.width * 0.02, vertical: Get.height * 0.02),
+              horizontal: Get.width * 0.1, vertical: Get.height * 0.02),
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ConstantTextField(
-                    controller: nameController,
-                    hintText: 'Enter your name',
-                    prefixIcon: Icons.person),
-                SizedBox(
-                  height: Get.height * 0.02,
-                ),
-                ConstantTextField(
-                    controller: cnicController,
-                    hintText: 'CNIC',
-                    prefixIcon: Icons.numbers),
-                SizedBox(
-                  height: Get.height * 0.02,
-                ),
-                ConstantTextField(
-                  controller: dateController,
-                  onTapPrefixIcon: () => showDate(context),
-                  hintText: 'Crime Date',
-                  prefixIcon: Icons.date_range,
-                ),
-                SizedBox(
-                  height: Get.height * 0.02,
-                ),
-                ValueListenableBuilder(
-                  valueListenable: selectedTime,
-                  builder: (context, value, child) {
-                    return DropdownButtonFormField<String>(
-                        dropdownColor: const Color(0xFFF0E6FF),
-                        hint: Text(
-                          'Crime Incident Time',
-                          style: kBody2Black,
-                        ),
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          size: 28.r,
-                          color: kBlack,
-                        ),
-                        isExpanded: true,
-                        decoration: InputDecoration(
-                            fillColor: const Color(0xFFF0E6FF),
-                            filled: true,
-                            prefixIcon: const Icon(
-                              Icons.night_shelter,
-                              color: kBlack,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: kWhite, width: 2.w),
-                                borderRadius:
-                                    BorderRadius.circular(Get.width * 0.1)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: kWhite, width: 2.w),
-                                borderRadius:
-                                    BorderRadius.circular(Get.width * 0.1))),
-                        value: value.isEmpty ? null : value,
-                        items: time.map((String value) {
-                          return DropdownMenuItem<String>(
-                              value: value,
-                              child: FittedBox(
-                                child: Text(
-                                  value,
-                                  style: kBody1Black,
-                                ),
-                              ));
-                        }).toList(),
-                        onChanged: (String? value) {
-                          selectedTime.value = value ?? '';
-                        });
-                  },
-                ),
-                SizedBox(
-                  height: Get.height * 0.02,
-                ),
                 ValueListenableBuilder(
                   valueListenable: selectedLocation,
                   builder: (context, value, child) {
@@ -286,78 +225,131 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 ValueListenableBuilder(
                   valueListenable: selectedCategory,
                   builder: (context, value, child) {
-                    return Container(
-                      child: DropdownButtonFormField<String>(
-                          dropdownColor: const Color(0xFFF0E6FF),
-                          hint: Text(
-                            'Category',
-                            style: kBody2Black,
-                          ),
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            size: 28.r,
-                            color: kBlack,
-                          ),
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                              fillColor: const Color(0xFFF0E6FF),
-                              filled: true,
-                              prefixIcon: const Icon(
-                                Icons.category,
-                                color: kBlack,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: kWhite, width: 2.w),
-                                  borderRadius:
-                                      BorderRadius.circular(Get.width * 0.1)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: kWhite, width: 2.w),
-                                  borderRadius:
-                                      BorderRadius.circular(Get.width * 0.1))),
-                          value: value.isEmpty ? null : value,
-                          items: category.map((String value) {
-                            return DropdownMenuItem<String>(
-                                value: value,
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    value,
-                                    style: kBody1Black,
-                                  ),
-                                ));
-                          }).toList(),
-                          onChanged: (String? value) {
-                            selectedCategory.value = value ?? '';
-                          }),
-                    );
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Category',
+                          style: kBody2Black,
+                        ),
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          size: 28.r,
+                          color: kBlack,
+                        ),
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.category,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: category.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  value,
+                                  style: kBody1Black,
+                                ),
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedCategory.value = value ?? '';
+                        });
                   },
                 ),
                 SizedBox(
-                  height: Get.height * 0.15,
+                  height: Get.height * 0.02,
                 ),
-                ConstantButton(
-                    buttonText: 'Submit Data',
-                    onTap: () {
-                      if (nameController.text.isEmpty ||
-                          cnicController.text.isEmpty ||
-                          selectedLocation.value.isEmpty ||
-                          dateController.text.isEmpty ||
-                          selectedTime.value.isEmpty ||
-                          selectedCategory.value.isEmpty) {
-                        Fluttertoast.showToast(msg: 'Please enter all detail');
-                      } else {
-                        provider.addCrimeReport(
-                          nameController.text.trim(),
-                          cnicController.text.trim(),
-                          selectedCategory.value,
-                          selectedLocation.value,
-                          dateController.text.trim(),
-                          selectedTime.value,
-                        );
-                      }
-                    })
+                ConstantTextField(
+                  controller: dateController,
+                  onTapPrefixIcon: () => showDate(context),
+                  hintText: 'Date',
+                  prefixIcon: Icons.date_range,
+                ),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (selectedLocation.value.isEmpty ||
+                        selectedCategory.value.isEmpty ||
+                        dateController.text.isEmpty) {
+                      Get.snackbar('Message', 'Select first',
+                          colorText: kWhite);
+                    } else {
+                      provider
+                          .getSearchCrimes(
+                              selectedLocation.value,
+                              selectedCategory.value,
+                              dateController.text.trim())
+                          .then((value) {
+                        _controller.reset();
+                        _controller.forward();
+                      });
+                    }
+                  },
+                  child: Text('Search'),
+                ),
+                SizedBox(
+                  height: Get.height * 0.05,
+                ),
+                provider.isCrime
+                    ? Column(
+                        children: [
+                          SlideTransition(
+                            position: _slideAnimationLeftToRight,
+                            child: FadeTransition(
+                              opacity: _fadeAnimation,
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                        text: 'Number of ', style: kBody1Black),
+                                    TextSpan(
+                                        text: selectedCategory.value,
+                                        style: kBody1Transparent),
+                                    TextSpan(text: ' in ', style: kBody1Black),
+                                    TextSpan(
+                                        text: '${selectedLocation.value}:',
+                                        style: kBody1Transparent),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          SlideTransition(
+                              position: _slideAnimationBottomToTop,
+                              child: FadeTransition(
+                                opacity: _fadeAnimation,
+                                child: Container(
+                                  padding: EdgeInsets.all(15.r),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Text(
+                                    provider.count.toString(),
+                                    style: kHead2White,
+                                  ),
+                                ),
+                              ))
+                        ],
+                      )
+                    : SizedBox()
               ],
             ),
           ),

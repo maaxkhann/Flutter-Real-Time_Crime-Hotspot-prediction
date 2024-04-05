@@ -18,8 +18,19 @@ class UserProfileView extends StatefulWidget {
 }
 
 class _UserProfileViewState extends State<UserProfileView> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    nameController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +39,7 @@ class _UserProfileViewState extends State<UserProfileView> {
     return SafeArea(
       child: Scaffold(
           appBar: const ConstantAppBar(text: 'ProfileView'),
-          body: StreamBuilder<ProfileModel>(
+          body: StreamBuilder(
               stream: profileViewModel.getUserData(),
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -41,26 +52,28 @@ class _UserProfileViewState extends State<UserProfileView> {
                   return Center(
                       child: Text('No user data', style: kHead2Black));
                 } else {
-                  return Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Get.width * 0.02,
-                          vertical: Get.height * 0.02),
-                      child: Consumer<ProfileViewModel>(
-                          builder: (context, value, child) {
-                        return Column(
+                  final profileModel = snapshot.data!;
+                  nameController.text = profileModel.name;
+                  return Consumer<ProfileViewModel>(
+                      builder: (context, value, child) {
+                    return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Get.width * 0.02,
+                            vertical: Get.height * 0.02),
+                        child: Column(
                           children: [
                             Center(
                                 child: Stack(
                               children: [
-                                profileViewModel.image != null
+                                value.image != null
                                     ? CircleAvatar(
                                         radius: 35.r,
                                         backgroundImage:
-                                            FileImage(profileViewModel.image!))
+                                            FileImage(value.image!))
                                     : CircleAvatar(
                                         radius: 35.r,
-                                        backgroundImage: NetworkImage(snapshot
-                                                .data?.profileImage ??
+                                        backgroundImage: NetworkImage(profileModel
+                                                .profileImage ??
                                             'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnme6H9VJy3qLGvuHRIX8IK4jRpjo_xUWlTw&usqp=CAU')),
                                 Positioned(
                                     bottom: 0,
@@ -68,7 +81,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                                     child: InkWell(
                                         onTap: () =>
                                             profileViewModel.pickImage(),
-                                        child: value.isUpload
+                                        child: profileViewModel.isUpload
                                             ? SpinKitCircle(
                                                 size: 24.r,
                                                 color: kBlack,
@@ -86,13 +99,51 @@ class _UserProfileViewState extends State<UserProfileView> {
                                 style: kBody1Black,
                               ),
                               subtitle: Text(
-                                value.name,
+                                profileModel.name,
                                 style: kBody2Black,
                               ),
                               trailing: IconButton(
                                   onPressed: () {
-                                    openDialog(context, nameController, 'Name',
-                                        Icons.person, profileViewModel);
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) {
+                                          return AlertDialog(
+                                            title: Text(
+                                              'Update',
+                                              style: kBody1Black,
+                                            ),
+                                            actions: [
+                                              ConstantTextField(
+                                                  controller: nameController,
+                                                  hintText: '',
+                                                  prefixIcon: Icons.person),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  TextButton(
+                                                      onPressed: () =>
+                                                          Get.back(),
+                                                      child: Text(
+                                                        'Cancel',
+                                                        style: kBody2Black,
+                                                      )),
+                                                  TextButton(
+                                                      onPressed: () =>
+                                                          profileViewModel
+                                                              .updateName(
+                                                                  nameController
+                                                                      .text
+                                                                      .trim()),
+                                                      child: Text(
+                                                        'Update',
+                                                        style: kBody2Black,
+                                                      ))
+                                                ],
+                                              )
+                                            ],
+                                          );
+                                        });
                                   },
                                   icon: const Icon(Icons.edit)),
                             ),
@@ -111,46 +162,10 @@ class _UserProfileViewState extends State<UserProfileView> {
                               ),
                             ),
                           ],
-                        );
-                      }));
+                        ));
+                  });
                 }
               }))),
     );
   }
-}
-
-Future openDialog(context, TextEditingController controller, String hintText,
-    IconData icon, ProfileViewModel profileViewModel) async {
-  showDialog(
-      context: context,
-      builder: (_) {
-        return AlertDialog(
-          title: Text(
-            'Update',
-            style: kBody1Black,
-          ),
-          actions: [
-            ConstantTextField(
-                controller: controller, hintText: hintText, prefixIcon: icon),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                    onPressed: () => Get.back(),
-                    child: Text(
-                      'Cancel',
-                      style: kBody2Black,
-                    )),
-                TextButton(
-                    onPressed: () =>
-                        profileViewModel.updateName(controller.text.trim()),
-                    child: Text(
-                      'Update',
-                      style: kBody2Black,
-                    ))
-              ],
-            )
-          ],
-        );
-      });
 }

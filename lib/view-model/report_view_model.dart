@@ -1,120 +1,48 @@
-import 'dart:io';
+import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:crime_management_system/notification_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:ndialog/ndialog.dart';
+import 'package:http/http.dart';
 
 class ReportViewModel extends ChangeNotifier {
-  FirebaseAuth auth = FirebaseAuth.instance;
-  User? user;
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  File? image;
-  File? video;
-  final picker = ImagePicker();
-  bool isUpload = false;
-
-  Future pickImage(ImageSource source) async {
-    XFile? pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      Fluttertoast.showToast(msg: 'Image selected');
-      image = File(pickedFile.path);
-      notifyListeners();
-    } else {
-      Fluttertoast.showToast(msg: 'No image selected');
-    }
-  }
-
-  Future pickVideo(ImageSource source) async {
-    XFile? pickedFile = await picker.pickVideo(source: source);
-    if (pickedFile != null) {
-      Fluttertoast.showToast(msg: 'Video selected');
-      video = File(pickedFile.path);
-      notifyListeners();
-    } else {
-      Fluttertoast.showToast(msg: 'No video selected');
-    }
-  }
-
-  // Future storeMedia(File media, String mediaType) async {
-  //   isUpload = true;
-  //   notifyListeners();
-  //   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-  //   try {
-  //     Reference storageRef = firebaseStorage
-  //         .ref()
-  //         .child('$mediaType/${DateTime.now().millisecondsSinceEpoch}');
-  //     UploadTask uploadTask = storageRef.putFile(media);
-  //     await Future.value(uploadTask);
-  //     var newUrl = await storageRef.getDownloadURL();
-
-  //     DocumentReference userRef =
-  //         firestore.collection('Users').doc(auth.currentUser!.uid);
-  //     await userRef.update({'$mediaType': newUrl.toString()});
-  //     Fluttertoast.showToast(
-  //         msg: '${mediaType == 'images' ? 'Image' : 'Video'} Uploaded');
-  //     isUpload = false;
-  //     notifyListeners();
-  //   } catch (e) {
-  //     Fluttertoast.showToast(msg: 'Something went wrong');
-  //     isUpload = false;
-  //     notifyListeners();
-  //     rethrow;
-  //   }
-  // }
-
-  Future<void> submitReport(BuildContext context, String name, String location,
-      String dateTime, String category, String details) async {
-    ProgressDialog progressDialog = ProgressDialog(context,
-        title: const Text('Submitting Data'),
-        message: const Text('Please wait'));
-    progressDialog.show();
+  void addCrimeReport(String name, String cnic, String category,
+      String location, String date, String time) async {
+    EasyLoading.show(status: 'loading...');
     try {
-      DocumentReference reportReference = firestore
-          .collection('Crime Data')
-          .doc(auth.currentUser!.uid)
-          .collection('Reports')
-          .doc();
+      Map<String, dynamic> requestBody = {
+        'reporter_name': name,
+        'reporter_cnic': cnic,
+        'crime_category': category,
+        'crime_location': location,
+        'report_date': date,
+        'incident_time': time
+      };
 
-      String? imageUrl;
-      String? videoUrl;
-      if (image != null) {
-        imageUrl = await storeMediaAndGetUrl(image!, 'images');
-      }
-      if (video != null) {
-        videoUrl = await storeMediaAndGetUrl(video!, 'videos');
-      }
+      String jsonBody = jsonEncode(requestBody);
 
-      await reportReference.set({
-        'name': name,
-        'location': location,
-        'dateTime': dateTime,
-        'category': category,
-        'details': details,
-        'imageUrl': imageUrl,
-        'videoUrl': videoUrl,
-        'userId': auth.currentUser!.uid,
-        'reportId': reportReference.id
-      });
-      Fluttertoast.showToast(msg: 'Report Submitted');
-      progressDialog.dismiss();
+      Response response = await post(
+          Uri.parse('http://13.126.116.79/api/v1/reports'),
+          body: jsonBody,
+          headers: {
+            'Content-Type': 'application/json',
+          });
+
+      if (response.statusCode == 200) {
+        EasyLoading.dismiss();
+        Fluttertoast.showToast(msg: 'Report Submitted');
+
+        LocalNotificationService.sendNotification(
+            title: 'Alert', message: '$category in $location');
+      } else {
+        EasyLoading.dismiss();
+        Fluttertoast.showToast(msg: 'Something went wrong');
+      }
     } catch (e) {
-      progressDialog.dismiss();
+      EasyLoading.dismiss();
       Fluttertoast.showToast(msg: 'Something went wrong');
+      rethrow;
     }
-  }
-
-  Future<String> storeMediaAndGetUrl(File media, String mediaType) async {
-    FirebaseStorage firebaseStorage = FirebaseStorage.instance;
-    Reference storageRef = firebaseStorage
-        .ref()
-        .child('$mediaType/${DateTime.now().millisecondsSinceEpoch}');
-    UploadTask uploadTask = storageRef.putFile(media);
-    await uploadTask;
-    var newUrl = await storageRef.getDownloadURL();
-    return newUrl.toString();
   }
 }

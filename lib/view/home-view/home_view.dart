@@ -1,23 +1,49 @@
 import 'package:crime_management_system/constant-widgets/constant_home_category.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
+import 'package:crime_management_system/notification_service.dart';
 import 'package:crime_management_system/view-model/auth_view_model.dart';
 import 'package:crime_management_system/view/home-view/about_us_view.dart';
 import 'package:crime_management_system/view/home-view/crime_prediction_view.dart';
 import 'package:crime_management_system/view/home-view/emergency_services_view.dart';
 import 'package:crime_management_system/view/home-view/registration-form/registration_form_view.dart';
 import 'package:crime_management_system/view/home-view/security_tips_view.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  LocalNotificationService localNotificationService =
+      LocalNotificationService();
+  @override
+  void initState() {
+    FirebaseMessaging.instance.getInitialMessage();
+    FirebaseMessaging.onMessage.listen((message) {
+      LocalNotificationService.display(message);
+    });
+
+    localNotificationService.requestNotificationPermission();
+    localNotificationService.forgroundMessage();
+    localNotificationService.firebaseInit(context);
+    localNotificationService.setupInteractMessage(context);
+    localNotificationService.isTokenRefresh();
+    FirebaseMessaging.instance.subscribeToTopic('subscription');
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
+
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(

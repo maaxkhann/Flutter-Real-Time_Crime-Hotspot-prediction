@@ -1,10 +1,9 @@
-import 'package:crime_management_system/view-model/auth_view_model.dart';
-import 'package:crime_management_system/view/auth-view/login_view.dart';
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
-import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
+import 'package:crime_management_system/view-model/auth_view_model.dart';
+import 'package:crime_management_system/view/auth-view/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -136,42 +135,6 @@ class _SignUpViewState extends State<SignUpView> {
                       )),
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Divider(
-                      endIndent: Get.width * 0.02,
-                      thickness: 0.5,
-                      color: kBlack,
-                    ),
-                  ),
-                  Text(
-                    'OR',
-                    style: kBody3Black,
-                  ),
-                  Expanded(
-                    child: Divider(
-                      indent: Get.width * 0.02,
-                      thickness: 0.5,
-                      color: kBlack,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: Get.height * 0.02,
-              ),
-              Center(
-                child: Text(
-                  'Sign In using',
-                  style: kBody3Black,
-                ),
-              ),
-              SizedBox(
-                height: Get.height * 0.01,
-              ),
-              Center(child: Image.asset('assets/images/google.png')),
             ],
           ),
         ),

@@ -37,7 +37,7 @@ class ProfileViewModel with ChangeNotifier {
     FirebaseStorage firebaseStorage = FirebaseStorage.instance;
     try {
       Reference storageRef =
-          firebaseStorage.ref().child('profileImage/${profileModel.email}');
+          firebaseStorage.ref().child('profileImage/${profileModel.email}/');
       UploadTask uploadTask = storageRef.putFile(image!);
       await Future.value(uploadTask);
       var newUrl = await storageRef.getDownloadURL();
@@ -59,7 +59,7 @@ class ProfileViewModel with ChangeNotifier {
   void updateName(String name) async {
     userRef = firestore.collection('Users').doc(auth.currentUser!.uid);
     await userRef!.update({'name': name});
-    notifyListeners();
+
     Get.back();
     Fluttertoast.showToast(msg: 'Name Updated');
   }
@@ -71,8 +71,6 @@ class ProfileViewModel with ChangeNotifier {
         .get()
         .then((value) {
       profileModel = ProfileModel.fromMap(value.data() as Map<String, dynamic>);
-      name = profileModel.name;
-      print(name);
       notifyListeners();
       return profileModel;
     });

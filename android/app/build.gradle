@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.realtime_crime_report"
-    compileSdkVersion 33
+    compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -65,4 +65,6 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    
+}
