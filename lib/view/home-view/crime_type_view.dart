@@ -5,6 +5,7 @@ import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:crime_management_system/view-model/crime_type_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -139,18 +140,18 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
     );
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_controller);
     _slideAnimationLeftToRight = Tween<Offset>(
-      begin: Offset(-1, 0),
+      begin: const Offset(-1, 0),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
     ));
     _slideAnimationBottomToTop = Tween<Offset>(
-      begin: Offset(0, 1),
+      begin: const Offset(0, 1),
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
@@ -160,10 +161,10 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<CrimeTypeViewModel>(context);
+    final provider = Provider.of<CrimeTypeViewModel>(context, listen: true);
     return SafeArea(
       child: Scaffold(
-        appBar: ConstantAppBar(text: 'Search With Category'),
+        appBar: const ConstantAppBar(text: 'Search With Category'),
         body: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: Get.width * 0.1, vertical: Get.height * 0.02),
@@ -288,8 +289,10 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
                     if (selectedLocation.value.isEmpty ||
                         selectedCategory.value.isEmpty ||
                         dateController.text.isEmpty) {
-                      Get.snackbar('Message', 'Select first',
-                          colorText: kWhite);
+                      Get.snackbar('Message', 'Select all fields',
+                          colorText: kWhite,
+                          isDismissible: true,
+                          dismissDirection: DismissDirection.startToEnd);
                     } else {
                       provider
                           .getSearchCrimes(
@@ -302,13 +305,19 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
                       });
                     }
                   },
-                  child: Text('Search'),
+                  child: const Text('Search'),
                 ),
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-                provider.isCrime
-                    ? Column(
+                provider.isLoading
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 12),
+                        child: SpinKitCircle(
+                          color: kBlack,
+                        ),
+                      )
+                    : Column(
                         children: [
                           SlideTransition(
                             position: _slideAnimationLeftToRight,
@@ -337,7 +346,7 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
                                 opacity: _fadeAnimation,
                                 child: Container(
                                   padding: EdgeInsets.all(15.r),
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     color: Colors.grey,
                                     shape: BoxShape.circle,
                                   ),
@@ -349,7 +358,6 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
                               ))
                         ],
                       )
-                    : SizedBox()
               ],
             ),
           ),

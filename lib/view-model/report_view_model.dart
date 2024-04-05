@@ -4,6 +4,7 @@ import 'package:crime_management_system/notification_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart';
 
 class ReportViewModel extends ChangeNotifier {
@@ -22,7 +23,7 @@ class ReportViewModel extends ChangeNotifier {
 
       String jsonBody = jsonEncode(requestBody);
 
-      Response response = await post(
+      var response = await post(
           Uri.parse('http://13.126.116.79/api/v1/reports'),
           body: jsonBody,
           headers: {
@@ -31,10 +32,12 @@ class ReportViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         EasyLoading.dismiss();
+
         Fluttertoast.showToast(msg: 'Report Submitted');
 
         LocalNotificationService.sendNotification(
             title: 'Alert', message: '$category in $location');
+        Get.back();
       } else {
         EasyLoading.dismiss();
         Fluttertoast.showToast(msg: 'Something went wrong');

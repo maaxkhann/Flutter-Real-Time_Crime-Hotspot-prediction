@@ -286,81 +286,79 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 ValueListenableBuilder(
                   valueListenable: selectedCategory,
                   builder: (context, value, child) {
-                    return Container(
-                      child: DropdownButtonFormField<String>(
-                          dropdownColor: const Color(0xFFF0E6FF),
-                          hint: Text(
-                            'Category',
-                            style: kBody2Black,
-                          ),
-                          icon: Icon(
-                            Icons.arrow_drop_down,
-                            size: 28.r,
-                            color: kBlack,
-                          ),
-                          isExpanded: true,
-                          decoration: InputDecoration(
-                              fillColor: const Color(0xFFF0E6FF),
-                              filled: true,
-                              prefixIcon: const Icon(
-                                Icons.category,
-                                color: kBlack,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: kWhite, width: 2.w),
-                                  borderRadius:
-                                      BorderRadius.circular(Get.width * 0.1)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: kWhite, width: 2.w),
-                                  borderRadius:
-                                      BorderRadius.circular(Get.width * 0.1))),
-                          value: value.isEmpty ? null : value,
-                          items: category.map((String value) {
-                            return DropdownMenuItem<String>(
-                                value: value,
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    value,
-                                    style: kBody1Black,
-                                  ),
-                                ));
-                          }).toList(),
-                          onChanged: (String? value) {
-                            selectedCategory.value = value ?? '';
-                          }),
-                    );
+                    return DropdownButtonFormField<String>(
+                        dropdownColor: const Color(0xFFF0E6FF),
+                        hint: Text(
+                          'Category',
+                          style: kBody2Black,
+                        ),
+                        icon: Icon(
+                          Icons.arrow_drop_down,
+                          size: 28.r,
+                          color: kBlack,
+                        ),
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                            fillColor: const Color(0xFFF0E6FF),
+                            filled: true,
+                            prefixIcon: const Icon(
+                              Icons.category,
+                              color: kBlack,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1)),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: kWhite, width: 2.w),
+                                borderRadius:
+                                    BorderRadius.circular(Get.width * 0.1))),
+                        value: value.isEmpty ? null : value,
+                        items: category.map((String value) {
+                          return DropdownMenuItem<String>(
+                              value: value,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  value,
+                                  style: kBody1Black,
+                                ),
+                              ));
+                        }).toList(),
+                        onChanged: (String? value) {
+                          selectedCategory.value = value ?? '';
+                        });
                   },
                 ),
-                SizedBox(
-                  height: Get.height * 0.15,
-                ),
-                ConstantButton(
-                    buttonText: 'Submit Data',
-                    onTap: () {
-                      if (nameController.text.isEmpty ||
-                          cnicController.text.isEmpty ||
-                          selectedLocation.value.isEmpty ||
-                          dateController.text.isEmpty ||
-                          selectedTime.value.isEmpty ||
-                          selectedCategory.value.isEmpty) {
-                        Fluttertoast.showToast(msg: 'Please enter all detail');
-                      } else {
-                        provider.addCrimeReport(
-                          nameController.text.trim(),
-                          cnicController.text.trim(),
-                          selectedCategory.value,
-                          selectedLocation.value,
-                          dateController.text.trim(),
-                          selectedTime.value,
-                        );
-                      }
-                    })
               ],
             ),
           ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+          child: ConstantButton(
+              buttonText: 'Submit Data',
+              onTap: () {
+                if (nameController.text.isEmpty ||
+                    cnicController.text.isEmpty ||
+                    selectedLocation.value.isEmpty ||
+                    dateController.text.isEmpty ||
+                    selectedTime.value.isEmpty ||
+                    selectedCategory.value.isEmpty) {
+                  Fluttertoast.showToast(msg: 'Please enter all detail');
+                } else {
+                  provider.addCrimeReport(
+                    nameController.text.trim(),
+                    cnicController.text.trim(),
+                    selectedCategory.value,
+                    selectedLocation.value,
+                    dateController.text.trim(),
+                    selectedTime.value,
+                  );
+                }
+              }),
         ),
       ),
     );

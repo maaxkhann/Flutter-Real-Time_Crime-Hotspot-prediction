@@ -2,7 +2,6 @@ import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
 import 'package:crime_management_system/constants/colors.dart';
 import 'package:crime_management_system/constants/textstyles.dart';
-import 'package:crime_management_system/model/profile_model.dart';
 import 'package:crime_management_system/view-model/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -52,10 +51,10 @@ class _UserProfileViewState extends State<UserProfileView> {
                   return Center(
                       child: Text('No user data', style: kHead2Black));
                 } else {
-                  final profileModel = snapshot.data!;
-                  nameController.text = profileModel.name;
                   return Consumer<ProfileViewModel>(
                       builder: (context, value, child) {
+                    final profileModel = snapshot.data!;
+                    nameController.text = profileModel.name;
                     return Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: Get.width * 0.02,
@@ -86,7 +85,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                                                 size: 24.r,
                                                 color: kBlack,
                                               )
-                                            : Icon(Icons.camera_alt)))
+                                            : const Icon(Icons.camera_alt)))
                               ],
                             )),
                             SizedBox(
@@ -129,12 +128,19 @@ class _UserProfileViewState extends State<UserProfileView> {
                                                         style: kBody2Black,
                                                       )),
                                                   TextButton(
-                                                      onPressed: () =>
-                                                          profileViewModel
-                                                              .updateName(
-                                                                  nameController
-                                                                      .text
-                                                                      .trim()),
+                                                      onPressed: () {
+                                                        profileViewModel
+                                                            .updateName(
+                                                                nameController
+                                                                    .text
+                                                                    .trim());
+                                                        Future.delayed(
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    200), () {
+                                                          setState(() {});
+                                                        });
+                                                      },
                                                       child: Text(
                                                         'Update',
                                                         style: kBody2Black,

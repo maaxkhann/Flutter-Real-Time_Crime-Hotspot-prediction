@@ -4,7 +4,6 @@ import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:crime_management_system/view-model/crime_rate_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
@@ -21,7 +20,7 @@ class CrimeRateView extends StatelessWidget {
           future: provider.getTopCrimes(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: SpinKitCircle(
                   color: kBlack,
                 ),
@@ -49,19 +48,17 @@ class CrimeRateView extends StatelessWidget {
             }).toList();
 
             return Center(
-              child: Container(
-                height: Get.height * 0.6,
-                padding: const EdgeInsets.all(8.0),
-                child: SfCartesianChart(
-                  primaryXAxis: CategoryAxis(labelRotation: 45),
-                  series: [
-                    ColumnSeries<CrimeData, String>(
+              child: Expanded(
+                child: SfCircularChart(
+                  series: <CircularSeries>[
+                    PieSeries<CrimeData, String>(
                       dataSource: crimesData,
                       xValueMapper: (CrimeData crime, _) => crime.location,
                       yValueMapper: (CrimeData crime, _) => crime.count,
+                      dataLabelMapper: (CrimeData crime, _) =>
+                          '${crime.location}: ${crime.count}',
                       dataLabelSettings: const DataLabelSettings(
-                        isVisible: true,
-                      ),
+                          isVisible: true, textStyle: TextStyle(fontSize: 10)),
                     ),
                   ],
                 ),

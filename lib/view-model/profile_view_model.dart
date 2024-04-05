@@ -65,14 +65,12 @@ class ProfileViewModel with ChangeNotifier {
   }
 
   Stream<ProfileModel> getUserData() async* {
-    yield await firestore
-        .collection('Users')
-        .doc(auth.currentUser!.uid)
-        .get()
-        .then((value) {
-      profileModel = ProfileModel.fromMap(value.data() as Map<String, dynamic>);
-      notifyListeners();
-      return profileModel;
-    });
+    DocumentSnapshot snapshot =
+        await firestore.collection('Users').doc(auth.currentUser!.uid).get();
+
+    profileModel =
+        ProfileModel.fromMap(snapshot.data() as Map<String, dynamic>);
+    notifyListeners();
+    yield profileModel;
   }
 }

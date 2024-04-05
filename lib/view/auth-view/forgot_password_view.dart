@@ -1,6 +1,7 @@
 import 'package:crime_management_system/constant-widgets/constant_appbar.dart';
 import 'package:crime_management_system/constant-widgets/constant_button.dart';
 import 'package:crime_management_system/constant-widgets/constant_textfield.dart';
+import 'package:crime_management_system/constants/textstyles.dart';
 import 'package:crime_management_system/view-model/auth_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -26,9 +27,31 @@ class _LoginViewState extends State<ForgotPasswordView> {
         appBar: const ConstantAppBar(text: 'Forgot Password'),
         body: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: Get.width * 0.04, vertical: Get.height * 0.1),
+              horizontal: Get.width * 0.04, vertical: Get.height * 0.02),
           child: Column(
             children: [
+              Center(
+                child: Text(
+                  'CrimeAlertPro',
+                  style: kHead2GreyLight,
+                ),
+              ),
+              SizedBox(
+                height: Get.height * 0.03,
+              ),
+              Center(
+                  child: Text(
+                'Forgot password!',
+                style: kBody1Black,
+              )),
+              Text(
+                'Type your email and we shall send you an email to your account to reset password.',
+                style: kBody2Black,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: Get.height * 0.04,
+              ),
               ConstantTextField(
                 controller: emailController,
                 hintText: 'Email',

@@ -104,7 +104,6 @@ class _CrimePredictionViewState extends State<CrimePredictionView> {
       if (selectedDate != null) {
         final formattedDate = DateFormat('M/dd/yyyy').format(selectedDate);
         dateController.text = formattedDate;
-        print(dateController.text);
       }
     });
   }
@@ -198,13 +197,15 @@ class _CrimePredictionViewState extends State<CrimePredictionView> {
                       Get.snackbar(
                           colorText: kWhite,
                           'Message',
-                          'Select location and date for prediction');
+                          'Select location and date for prediction',
+                          isDismissible: true,
+                          dismissDirection: DismissDirection.startToEnd);
                     } else {
                       provider.getPrediction(
                           selectedLocation.value, dateController.text.trim());
                     }
                   },
-                  child: Text('Predict'),
+                  child: const Text('Predict'),
                 ),
                 SizedBox(
                   height: Get.height * 0.08,
@@ -212,52 +213,49 @@ class _CrimePredictionViewState extends State<CrimePredictionView> {
                 selectedLocation.value.isNotEmpty ||
                         dateController.text.isNotEmpty
                     ? provider.isLoading
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 12),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 12),
                             child: SpinKitCircle(
                               color: kBlack,
                             ),
                           )
-                        : Container(
-                            child: PieChart(
-                              dataMap: {
-                                'Safe': 1 - provider.prediction,
-                                'Crime': provider.prediction,
-                              },
-                              animationDuration: const Duration(seconds: 2),
-                              chartLegendSpacing: 32,
-                              chartRadius:
-                                  MediaQuery.of(context).size.width / 2,
-                              //    baseChartColor: Colors.grey[50]!.withOpacity(0.15),
-                              colorList: [
-                                const Color(0xff4285f4), // Color for the 30%
-                                Colors.red, // Transparent color for the 70%
-                              ],
-                              initialAngleInDegree: 0,
-                              chartType: ChartType.disc,
-                              ringStrokeWidth: 0, // Fill the entire circle
-                              legendOptions: LegendOptions(
-                                showLegendsInRow: false,
-                                legendPosition: LegendPosition.right,
-                                showLegends: provider.prediction != null
-                                    ? true
-                                    : false, // Hide the legend
-                                legendShape: BoxShape.circle,
-                                legendTextStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                        : PieChart(
+                            dataMap: {
+                              'Safe': 1 - provider.prediction,
+                              'Crime': provider.prediction,
+                            },
+                            animationDuration: const Duration(seconds: 2),
+                            chartLegendSpacing: 32,
+                            chartRadius: MediaQuery.of(context).size.width / 2,
+                            //    baseChartColor: Colors.grey[50]!.withOpacity(0.15),
+                            colorList: const [
+                              Color(0xff4285f4), // Color for the 30%
+                              Colors.red, // Transparent color for the 70%
+                            ],
+                            initialAngleInDegree: 0,
+                            chartType: ChartType.disc,
+                            ringStrokeWidth: 0, // Fill the entire circle
+                            legendOptions: LegendOptions(
+                              showLegendsInRow: false,
+                              legendPosition: LegendPosition.right,
+                              showLegends: provider.prediction != null
+                                  ? true
+                                  : false, // Hide the legend
+                              legendShape: BoxShape.circle,
+                              legendTextStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
                               ),
-                              chartValuesOptions: const ChartValuesOptions(
-                                showChartValueBackground: true,
-                                showChartValues: true,
-                                showChartValuesInPercentage: true,
-                                showChartValuesOutside: false,
-                                decimalPlaces: 4,
-                              ),
-                              totalValue: 1,
                             ),
+                            chartValuesOptions: const ChartValuesOptions(
+                              showChartValueBackground: true,
+                              showChartValues: true,
+                              showChartValuesInPercentage: true,
+                              showChartValuesOutside: false,
+                              decimalPlaces: 4,
+                            ),
+                            totalValue: 1,
                           )
-                    : SizedBox()
+                    : const SizedBox()
               ],
             ),
           ),
@@ -266,7 +264,7 @@ class _CrimePredictionViewState extends State<CrimePredictionView> {
           padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
           child: ConstantButton(
               buttonText: 'Search With Type',
-              onTap: () => Get.to(() => CrimeTypeView())),
+              onTap: () => Get.to(() => const CrimeTypeView())),
         ),
       ),
     );

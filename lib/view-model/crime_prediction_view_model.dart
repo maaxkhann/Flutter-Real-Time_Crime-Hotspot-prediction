@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart';
 
@@ -30,9 +29,7 @@ class CrimePredictionViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         jsonResponse = jsonDecode(response.body);
-        print(response.statusCode);
-        EasyLoading.dismiss();
-        print(response.body);
+
         prediction = double.parse(jsonResponse['data']['prediction']);
 
         isLoading = false;

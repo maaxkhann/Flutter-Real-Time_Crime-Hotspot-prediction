@@ -72,9 +72,13 @@ class LocalNotificationService {
       );
 
       if (r.statusCode == 200) {
-        print('Notification sent successfully.');
+        if (kDebugMode) {
+          print('Notification sent successfully.');
+        }
       } else {
-        print('Failed to send notification. Status code: ${r.statusCode}');
+        if (kDebugMode) {
+          print('Failed to send notification. Status code: ${r.statusCode}');
+        }
       }
     } catch (e) {
       rethrow;
