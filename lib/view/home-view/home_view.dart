@@ -36,7 +36,7 @@ class _HomeViewState extends State<HomeView> {
     localNotificationService.firebaseInit(context);
     localNotificationService.setupInteractMessage(context);
     localNotificationService.isTokenRefresh();
-    FirebaseMessaging.instance.subscribeToTopic('subscription');
+    FirebaseMessaging.instance.subscribeToTopic('all');
     super.initState();
   }
 

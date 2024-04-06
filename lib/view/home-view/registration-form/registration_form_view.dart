@@ -174,7 +174,7 @@ class _RegistrationFormViewState extends State<RegistrationFormView> {
                 ConstantTextField(
                   controller: dateController,
                   onTapPrefixIcon: () => showDate(context),
-                  hintText: 'Crime Date',
+                  hintText: 'Crime Date (m/dd/yyyy)',
                   prefixIcon: Icons.date_range,
                 ),
                 SizedBox(

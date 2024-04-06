@@ -130,7 +130,6 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
       if (selectedDate != null) {
         final formattedDate = DateFormat('M/dd/yyyy').format(selectedDate);
         dateController.text = formattedDate;
-        print(dateController.text);
       }
     });
   }
@@ -157,6 +156,14 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
       parent: _controller,
       curve: Curves.easeInOut,
     ));
+  }
+
+  @override
+  void dispose() {
+    dateController.dispose();
+    selectedLocation.dispose();
+    selectedCategory.dispose();
+    super.dispose();
   }
 
   @override
@@ -278,7 +285,7 @@ class _CrimeTypeViewState extends State<CrimeTypeView>
                 ConstantTextField(
                   controller: dateController,
                   onTapPrefixIcon: () => showDate(context),
-                  hintText: 'Date',
+                  hintText: 'Date (m/dd/yyyy)',
                   prefixIcon: Icons.date_range,
                 ),
                 SizedBox(

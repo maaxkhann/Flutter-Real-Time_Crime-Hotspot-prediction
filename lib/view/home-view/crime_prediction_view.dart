@@ -184,7 +184,7 @@ class _CrimePredictionViewState extends State<CrimePredictionView> {
                 ConstantTextField(
                   controller: dateController,
                   onTapPrefixIcon: () => showDate(context),
-                  hintText: 'Date',
+                  hintText: 'Date (m/dd/yyyy)',
                   prefixIcon: Icons.date_range,
                 ),
                 SizedBox(

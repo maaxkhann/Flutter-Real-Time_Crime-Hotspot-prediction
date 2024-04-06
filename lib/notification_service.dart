@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -24,8 +24,6 @@ class LocalNotificationService {
 
   static void display(RemoteMessage message) async {
     try {
-      Random random = Random();
-      int id = random.nextInt(1000);
       const NotificationDetails notificationDetails = NotificationDetails(
           android: AndroidNotificationDetails(
         "mychannel",
@@ -35,13 +33,13 @@ class LocalNotificationService {
       ));
 
       await _flutterLocalNotificationsPlugin.show(
-        id,
+        0,
         message.notification!.title,
         message.notification!.body,
         notificationDetails,
       );
-    } on Exception catch (e) {
-      print('Error>>>$e');
+    } on Exception {
+      rethrow;
     }
   }
 
@@ -66,7 +64,7 @@ class LocalNotificationService {
             'notification': <String, dynamic>{'body': message, 'title': title},
             'priority': 'high',
             'data': data,
-            "to": "/topics/subscription"
+            "to": "/topics/all"
           },
         ),
       );
@@ -102,10 +100,7 @@ class LocalNotificationService {
     }
   }
 
-  //initialising firebase message plugin
   FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-  //initialising firebase message plugin
 
   void initLocalNotifications(
       BuildContext context, RemoteMessage message) async {
@@ -119,7 +114,7 @@ class LocalNotificationService {
     await _flutterLocalNotificationsPlugin.initialize(initializationSetting,
         onDidReceiveNotificationResponse: (payload) {
       // handle interaction when app is active for android
-      handleMessage(context, message);
+      handleMessage(message);
     });
   }
 
@@ -182,20 +177,17 @@ class LocalNotificationService {
       importance: Importance.max,
       showBadge: true,
       playSound: true,
-      // sound: const RawResourceAndroidNotificationSound('jetsons_doorbell')
     );
 
     AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-      channel.id.toString(), channel.name.toString(),
+      channel.id.toString(),
+      channel.name.toString(),
       channelDescription: 'your channel description',
       importance: Importance.high,
       priority: Priority.high,
       playSound: true,
       ticker: 'ticker',
-      //   sound: channel.sound
-      //     sound: RawResourceAndroidNotificationSound('jetsons_doorbell')
-      //  icon: largeIconPath
     );
 
     const DarwinNotificationDetails darwinNotificationDetails =
@@ -215,7 +207,6 @@ class LocalNotificationService {
     });
   }
 
-  //function to get device token on which we will send the notifications
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
     return token!;
@@ -230,26 +221,23 @@ class LocalNotificationService {
     });
   }
 
-  //handle tap on notification when app is in background or terminated
   Future<void> setupInteractMessage(BuildContext context) async {
     // when app is terminated
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
 
     if (initialMessage != null) {
-      handleMessage(context, initialMessage);
+      handleMessage(initialMessage);
     }
 
     //when app ins background
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      handleMessage(context, event);
+      handleMessage(event);
     });
   }
 
-  void handleMessage(BuildContext context, RemoteMessage message) {
-    if (message.data['type'] == 'msj') {
-      // Get.to(() => const UserNotificationScreen());
-    }
+  void handleMessage(RemoteMessage message) {
+    if (message.data['type'] == 'msj') {}
   }
 
   Future forgroundMessage() async {
